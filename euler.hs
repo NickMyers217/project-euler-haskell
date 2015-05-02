@@ -35,4 +35,7 @@
 
 
 --Problem 4
-	
+	euler4 = lgstPalindrome 100 999
+	lgstPalindrome strt cap = maximum (filter isPalindrome [ a * b | a <- [strt..cap], b <- [a..cap] ])
+		where isPalindrome n = show n == reverse (show n)
+
