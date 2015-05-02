@@ -58,6 +58,22 @@
     euler5' :: (Integral a) => [a] -> a
     euler5' divisors = foldr lcm 1 divisors
 
+--Problem 6
+    euler6 :: (Integral a) => [a] -> a
+    euler6 nums = (sum nums ^2) - (sum [ n ^2 | n <- nums ])
 
+--Problem 7
+    --This one is slow becuase it has to do the whole list comprehension
+    --If it used recursion it could just break out and return false on the first divisor
+    isPrime :: (Integral a) => a -> Bool
+    isPrime 1 = False
+    isPrime 2 = True
+    isPrime 3 = True
+    isPrime n
+        | even n                          = False
+        | length oddDivisorsBelowRoot > 0 = False
+        | otherwise                       = True
+        where oddDivisorsBelowRoot = [ x | x <- [3,5..truncate (sqrt (fromIntegral n)) + 1], n `mod` x == 0]
 
-
+    euler7 :: (Integral a) => Int -> a
+    euler7 target = [ n | n <- [2..], isPrime n]!!(target - 1)
