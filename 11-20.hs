@@ -20,24 +20,49 @@ grid = [[08, 02, 22, 97, 38, 15, 00, 40, 00, 75, 04, 05, 07, 78, 52, 12, 50, 77,
         [20, 73, 35, 29, 78, 31, 90, 01, 74, 31, 49, 71, 48, 86, 81, 16, 23, 57, 05, 54],
         [01, 70, 54, 71, 83, 51, 54, 69, 16, 92, 33, 48, 61, 43, 52, 01, 89, 19, 67, 48]]
 
-vectors = [[-1,-1], [0,-1], [1,-1], [-1,0], [1,0], [-1,1], [0,1], [1,1]]
+vectors = [(-1,-1), (0,-1), (1,-1), (-1,0), (1,0), (-1,1), (0,1), (1,1)]
 
 getCell (x, y) = grid !! y !! x
 
-getAdjProducts x y vec amt
+getAdjProduct x y vec amt
     | x + (dX * amt) >= 0 && x + (dX * amt) < 20 && y + (dY * amt) >= 0 && y + (dY * amt) < 20 = 
-        product( map getCell (take amt (xList `zip` yList)))
+        helperFunc coordinates
     | otherwise = 0
-    where dX    = head (vectors!!vec)
-          dY    = head (tail (vectors!!vec))
-          xList = [x, (x + dX)..]
-          yList = [y, (y + dY)..]
+    where dX          = fst $ vectors!!vec
+          dY          = snd $ vectors!!vec
+          coordinates = [x, x + dX..] `zip` [y, y + dY..]
+          helperFunc  = product . map getCell . take amt
 
 getLgstProduct x y vec res
     | y < 0                           = res
     | x < 0                           = getLgstProduct (length grid - 1) (y - 1) vec res
     | vec < 0                         = getLgstProduct (x - 1) y (length vectors - 1) res
-    | getAdjProducts x y vec 4 > res  = getLgstProduct x y (vec - 1) (getAdjProducts x y vec 4)
+    | getAdjProduct x y vec 4 > res   = getLgstProduct x y (vec - 1) (getAdjProduct x y vec 4)
     | otherwise                       = getLgstProduct x y (vec - 1) res
 
 euler11 = getLgstProduct 19 19 7 0
+
+
+--Problem 12
+euler12 target = head $ dropWhile (\n -> getDivisorCount n < target) triNums
+                 where triNums = [ sum [1..n] | n <- [1..] ]
+                       getDivisorCount n = 2 * length [ d | d <- [1..(isqrt n)], n `mod` d == 0 ]
+                         where isqrt = ceiling . sqrt . fromIntegral
+
+
+--Problem 13
+
+
+--Problem 14
+longestCollatz n res resLength
+    | n == 1                 = res
+    | thisLength > resLength = longestCollatz (n - 1) n thisLength
+    | otherwise              = longestCollatz (n - 1) res resLength
+    where
+      collatz all@(x:xs)
+          | x == 1         = reverse all
+          | x `mod` 2 == 0 = collatz $ x `div` 2 : all
+          | otherwise      = collatz $ 3 * x + 1 : all 
+      thisLength = length $ collatz $ n : []
+               
+euler14 = longestCollatz 999999 0 0
