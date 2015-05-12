@@ -187,3 +187,5 @@ euler15 = latticeCount 20
 euler16 = powerSum 1000
     where
       powerSum exp = sum $ map digitToInt $ show $ 2^exp
+
+     
